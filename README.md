@@ -14,7 +14,7 @@
 
 ## Project Structure
 
-```
+```sh
 conda-recipe-libertinus/
 ├── otf/                    # Conda recipe for the static OpenType fonts of the
 │   │                       # Libertinus family. Installs the `.otf` files into
@@ -43,67 +43,71 @@ conda-recipe-libertinus/
     └── recipe.yaml
 ```
 
-## Installation
+## Installation as a Dependency
 
 ### I. Prerequisites
 
-| Component            | Requirement                                                                     |
-| :------------------- | :------------------------------------------------------------------------------ |
-| **Package Manager**  | [`Pixi`](https://pixi.prefix.dev/latest/) with `pixi-build` support             |
-| **Operating System** | Unix-like system [^1]                                                           |
-| **Architecture**     | Any                                                                             |
-| **Network**          | Internet access to fetch the font archive from the official upstream repository |
+| **Component**               | **Requirement**  |
+| :-------------------------- | :--------------- |
+| **Operating System**        | `Unix`-like [^1] |
+| **Package Management Tool** | [`Pixi`](https://pixi.prefix.dev/latest/#installation) with `pixi-build` feature enabled |
 
-[^1]: The build scripts use POSIX shell, so Windows is not supported.
+[^1]: Build scripts rely on a POSIX-compliant shell.
 
 <!--    
     ================================================================================================
 -->
 
-### II. Enable `pixi-build`
+### II. Adding a package
 
-Add the `pixi-build` preview feature to the `[workspace]` section of your `pixi.toml`:
+- To add the OpenType (OTF) package, run:
 
-```toml
-[workspace]
-preview = ["pixi-build"]
-```
+    ```sh
+    pixi add \
+        --git https://github.com/snegoviol/libertinus-conda-recipes \
+        --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
+        --subdirectory otf \
+        libertinus-otf
+    ```
 
-> **Note:**  
-> As of Pixi 0.81.0, `pixi-build` is still a preview feature, so it has to be enabled explicitly. Once it is stabilized, this step may become unnecessary and the syntax may change.
+- To add the TrueType (TTF) package, run:
 
-<!--    
-    ================================================================================================
--->
+    ```sh
+    pixi add \
+        --git https://github.com/snegoviol/libertinus-conda-recipes \
+        --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
+        --subdirectory ttf \
+        libertinus-ttf
+    ```
 
-### III. Installation
+- To add the WOFF2 package, run:
 
-Add the font format you need. Pixi will fetch the recipe from this repository, build the package, and install it into your environment:
+    ```sh
+    pixi add \
+        --git https://github.com/snegoviol/libertinus-conda-recipes \
+        --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
+        --subdirectory woff2 \
+        libertinus-woff2
+    ```
 
-```bash
-# OpenType
-pixi add \
-    --git https://github.com/snegoviol/libertinus-conda-recipes \
-    --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
-    --subdirectory otf \
-    libertinus-otf
+### III. Usage
 
-# TrueType
-pixi add \
-    --git https://github.com/snegoviol/libertinus-conda-recipes \
-    --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
-    --subdirectory ttf \
-    libertinus-ttf
+Once the package is installed, the fonts are placed in the `$CONDA_PREFIX/share/fonts/<format>/` directory of your active environment, and you can start using them in your project.
 
-# WOFF2
-pixi add \
-    --git https://github.com/snegoviol/libertinus-conda-recipes \
-    --rev 0f3101bdf9b3eb4dfc6c2418990922d6488bef51 \
-    --subdirectory woff2 \
-    libertinus-woff2
-```
+For example, to use these fonts in a Typst project managed by Pixi:
 
-The fonts are installed into `$CONDA_PREFIX/share/fonts/<format>/` of the environment.
+1. Add the font path to your `pixi.toml` to ensure the Typst compiler can locate these fonts:
+
+    ```toml
+    [activation.env]
+    TYPST_FONT_PATHS = "$CONDA_PREFIX/share/fonts"
+    ```
+
+2. Reference the font in your Typst document:
+
+    ```typst
+    #set text(font: "Libertinus Sans")
+    ```
 
 <!--    
     ================================================================================================
